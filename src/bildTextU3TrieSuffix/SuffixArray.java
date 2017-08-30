@@ -7,25 +7,20 @@ import java.util.Arrays;
  */
 public class SuffixArray {
 
-    public Suffix[] getSuffixArray() {
-        return suffixArray;
-    }
 
     private Suffix[] suffixArray;
+    private String T;
 
 
     public SuffixArray(String text){
 
-        suffixArray = new Suffix[text.length()+1];
+        suffixArray = new Suffix[text.length()];
+        this.T =text;
 
         //Fill the array with every suffix of text
-        for(int i = 0; i<text.length()+1;i++){
+        for(int i = 0; i<text.length();i++){
             suffixArray[i] = new Suffix(i, text.substring(i, text.length()));
 
-            //Add special-char $
-            if(i==text.length()){
-                suffixArray[i]=new Suffix(i, "");
-            }
         }
 
         System.out.println(toString());
@@ -35,30 +30,59 @@ public class SuffixArray {
 
     }
 
-    /**
-     *
-     * @param pattern : String
-     * @return index : int
-     */
-    public int longestMatch(String pattern){
-        Suffix p = new Suffix(0,pattern);
 
-        int m, c=-1, left = 0, right = suffixArray.length;
+    public int compareWithSuffix(int i, String P){
+        int c = 0, j = 0;
+        int pChar, tChar;
 
-        while(left<=right && c!=0){
-            m = left+(right-left)/2;
-            c = p.compareTo(suffixArray[m]);
-            if(c==0){
-                return m;
-            }else if(c<0){
-                right = m-1;
+        while(j< P.length() && c==0){
+            if(i+j <= T.length()){
+
+                pChar = P.charAt(j);
+                tChar = T.charAt(i+j);
+                if (T.contains(P.charAt(j) + "")) {
+                    c = pChar - tChar;
+                } else {
+                    StringBuilder sb = new StringBuilder(P);
+                    sb.deleteCharAt(j);
+                    P = sb.toString();
+                    j = 0;
+                    continue;
+
+                }
             }else{
-                left = m+1;
+                c=1;
+            }
+            j++;
+        }
+
+        return c;
+    }
+
+
+
+    public int longestMatch(String pattern){
+        int l =0, r= suffixArray.length-1, c=-1, m;
+
+        while(c!=0 && l<=r){
+
+            m = l + (r-l)/2;
+            c = compareWithSuffix(suffixArray[m].index, pattern);
+            if(c==0){
+                return suffixArray[m].index;
+            }
+            if(c<0){
+                r = m -1;
+            }
+            if(c>0){
+                l = m+1;
             }
         }
 
-        return -1;
+        return l;
     }
+
+
 
     /**Returns a String representation of this suffix-array in format <i : I : suffix> where i corresponds to the
      * array-index where the suffix is stored, I corresponds to the starting-position of the suffix.
@@ -68,7 +92,7 @@ public class SuffixArray {
     public String toString(){
         StringBuilder s = new StringBuilder();
         for(int i =0; i<suffixArray.length;i++){
-            s.append("i: "+i+suffixArray[i].toString()+"\n");
+            s.append("i: "+i+"\t"+suffixArray[i].toString()+"\n");
         }
         return s.toString();
 
@@ -88,11 +112,15 @@ public class SuffixArray {
         public Suffix(int index, String suffix){
 
             this.index=index;
-            this.suffix=suffix+"$";
+            this.suffix=suffix;
         }
 
-        public String getSuffix() {
-            return suffix;
+        public int length(){
+            return suffix.length();
+        }
+
+        public char charAt(int i){
+            return suffix.charAt(i);
         }
 
         public String toString(){
@@ -101,24 +129,22 @@ public class SuffixArray {
 
         @Override
         public int compareTo(Object o) {
-            Suffix other = (Suffix)o;
-            if(this.suffix.equals(other.getSuffix())){
-                return 0;
-            }else{
-                int length = Math.min(this.suffix.length(), other.getSuffix().length());
-                for(int i = 0; i< length; i++){
-                    if(this.suffix.charAt(i)>other.getSuffix().charAt(i)){
-                        return 1;
-                    }else if(this.suffix.charAt(i)<other.getSuffix().charAt(i)) {
-                        return -1;
-                    }
-                    //chars at i equal -> next iteratioin.
-                }
+            Suffix otherSuffix = (Suffix)o;
 
+            int length = Math.min(this.length(), otherSuffix.length());
+            for (int i = 0; i < length; i++){
+                if(this.charAt(i)<otherSuffix.charAt(i)){
+                    return -1;
+                }
+                if(this.charAt(i)>otherSuffix.charAt(i)){
+                    return 1;
+                }
             }
 
-            return 0;
+            return this.length()-otherSuffix.length();
         }
+
+
     }
 
 

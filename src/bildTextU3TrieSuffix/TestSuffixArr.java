@@ -8,10 +8,10 @@ public class TestSuffixArr {
 
     public static void main(String[] args) {
 
-        SuffixArray s = new SuffixArray("tobeornottobe");
+        SuffixArray s = new SuffixArray("tobeornottobe$");
 
-        System.out.println(s.longestMatch("nottobe"));
-
+        System.out.println(s.longestMatch("ottobe"));
+        System.out.println(s.longestMatch("ottobexxxxxx"));
 
     }
 
