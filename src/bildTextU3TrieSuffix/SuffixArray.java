@@ -59,6 +59,31 @@ public class SuffixArray {
         return c;
     }
 
+    private int compare(Suffix suffix, String pattern) {
+        int c= 0, j =0;
+        int len = Math.min(pattern.length(), suffix.suffix.length());
+
+        while(j<len && c ==0){
+            if(suffix.index+j<= T.length()){
+
+                if(suffix.suffix.contains(pattern.charAt(j)+"")){
+                    c = pattern.charAt(j)- T.charAt(suffix.index+j);
+                }else{
+                    StringBuilder sb = new StringBuilder(pattern);
+                    sb.deleteCharAt(j);
+                    pattern = sb.toString();
+                    j = 0;
+                    continue;
+                }
+
+            }else{
+                c = 1;
+            }
+            j++;
+        }
+
+        return c;
+    }
 
 
     public int longestMatch(String pattern){
@@ -68,6 +93,8 @@ public class SuffixArray {
 
             m = l + (r-l)/2;
             c = compareWithSuffix(suffixArray[m].index, pattern);
+//            c = compare(suffixArray[m], pattern);
+
             if(c==0){
                 return suffixArray[m].index;
             }
@@ -81,7 +108,6 @@ public class SuffixArray {
 
         return l;
     }
-
 
 
     /**Returns a String representation of this suffix-array in format <i : I : suffix> where i corresponds to the
