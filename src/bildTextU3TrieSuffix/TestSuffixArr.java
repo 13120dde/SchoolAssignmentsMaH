@@ -10,8 +10,13 @@ public class TestSuffixArr {
 
         SuffixArray s = new SuffixArray("tobeornottobe$");
 
-        System.out.println(s.longestMatch("tt"));
-        System.out.println(s.longestMatch("ttx"));
+        System.out.println(s.longestCommonPrefix("not"));
+        System.out.println(s.longestCommonPrefix("notxxx"));
+        System.out.println(s.longestCommonPrefix("tt"));
+        System.out.println(s.longestCommonPrefix("ttx"));
+        System.out.println(s.longestCommonPrefix("ttobe"));
+        System.out.println(s.longestCommonPrefix("ttobex"));
+        System.out.println(s.longestCommonPrefix("xxx"));
 
     }
 

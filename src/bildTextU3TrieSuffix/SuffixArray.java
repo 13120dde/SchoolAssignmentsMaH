@@ -3,19 +3,17 @@ package bildTextU3TrieSuffix;
 import java.util.Arrays;
 
 /**
- * Created by Patrik Lind on 2016-12-13.
+ * Created by Patrik Lind, Johan Held on 2016-12-13.
  */
 public class SuffixArray {
 
 
     private Suffix[] suffixArray;
-    private String T;
 
 
     public SuffixArray(String text){
 
         suffixArray = new Suffix[text.length()];
-        this.T =text;
 
         //Fill the array with every suffix of text
         for(int i = 0; i<text.length();i++){
@@ -31,83 +29,66 @@ public class SuffixArray {
     }
 
 
-    public int compareWithSuffix(int i, String P){
-        int c = 0, j = 0;
-        int pChar, tChar;
+    private int compare(String suffix, String pattern) {
+       int length = Math.min(suffix.length(),pattern.length());
+       int j=0, comp, hits =0;
+       while(j<length){
+           comp = pattern.charAt(j)-suffix.charAt(j);
+           if(comp==0){
+               hits++;
+           }else{
+               hits++;
+               if(comp<0){
+                   return -hits;
+               }else if(comp>0){
+                   return hits;
+               }
+           }
 
-        while(j< P.length() && c==0){
-            if(i+j <= T.length()){
+           j++;
+       }
 
-                pChar = P.charAt(j);
-                tChar = T.charAt(i+j);
-                if (T.contains(P.charAt(j) + "")) {
-                    c = pChar - tChar;
-                } else {
-                    StringBuilder sb = new StringBuilder(P);
-                    sb.deleteCharAt(j);
-                    P = sb.toString();
-                    j = 0;
-                    continue;
-
-                }
-            }else{
-                c=1;
-            }
-            j++;
-        }
-
-        return c;
-    }
-
-    private int compare(Suffix suffix, String pattern) {
-        int c= 0, j =0;
-        int len = Math.min(pattern.length(), suffix.suffix.length());
-
-        while(j<len && c ==0){
-            if(suffix.index+j<= T.length()){
-
-                if(suffix.suffix.contains(pattern.charAt(j)+"")){
-                    c = pattern.charAt(j)- T.charAt(suffix.index+j);
-                }else{
-                    StringBuilder sb = new StringBuilder(pattern);
-                    sb.deleteCharAt(j);
-                    pattern = sb.toString();
-                    j = 0;
-                    continue;
-                }
-
-            }else{
-                c = 1;
-            }
-            j++;
-        }
-
-        return c;
+       return 0;
     }
 
 
-    public int longestMatch(String pattern){
-        int l =0, r= suffixArray.length-1, c=-1, m;
+    public int longestCommonPrefix(String pattern){
+        int left =0, right= suffixArray.length-1, comp=-1, middle;
+        int a=0, b=0;
 
-        while(c!=0 && l<=r){
+        while(left<=right && comp!=0){
 
-            m = l + (r-l)/2;
-            c = compareWithSuffix(suffixArray[m].index, pattern);
-//            c = compare(suffixArray[m], pattern);
-
-            if(c==0){
-                return suffixArray[m].index;
+            middle = left + (right-left)/2;
+            comp = compare (suffixArray[middle].suffix, pattern);
+            if(comp==0){
+                return suffixArray[middle].index;
             }
-            if(c<0){
-                r = m -1;
+
+
+            int abs = Math.abs(comp)-1;
+            if(abs>b){
+                a=suffixArray[middle].index;
+                b=abs;
             }
-            if(c>0){
-                l = m+1;
+
+            if(comp<0){
+                right = middle -1;
+            }
+            if(comp>0){
+                left = middle+1;
             }
         }
 
-        return l;
+        if(b>0){
+            return a;
+        }
+        if(pattern.length()>1){
+            return longestCommonPrefix(pattern.substring(1));
+        }
+
+        return left;
     }
+
 
 
     /**Returns a String representation of this suffix-array in format <i : I : suffix> where i corresponds to the
