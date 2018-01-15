@@ -59,7 +59,7 @@ public class TestMBM {
         TestMBM prog = new TestMBM();
 
       prog.testFall4();
-      //  prog.testFall2();
+      prog.testFall2();
 
     }
 
